@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="quest2.js"></script>
+<script>
+    
+    $(document).ready(function(){
+    // Create the initial chart
+    createChart();
+
+    // Update the chart every 1 second
+    setInterval(function() {
+    // Fetch updated data from the server
+    $.ajax({
+        type: "GET",
+        url: "https://example.com/quest2.js", // replace with the URL of your server endpoint
+        dataType: "json",
+        success: function(data) {
+            // Update the chart with the new data
+            chart.options.data[0].dataPoints = data;
+            chart.render();
+        }
+    });
+}, 5000); // Update every 5 seconds (5000 milliseconds)
+
+    function createChart() {
+        $.ajax({
+            type: "GET",
+            url:"questdata.csv",
+            dataType:"text",
+            success: function(data){
+                var lines = data.split("\n");
+                var sensorData = {
+                    Lidar: [],
+                    Temp: [],
+                    Ultra: [],
+                    Solar: []
+                };
+                for (var i = 0; i < lines.length; i++) {
+                    let line = lines[i].split(",");
+                    let Lidar = parseFloat(line[0]);
+                    let Temp = parseFloat(line[1]);
+                    let Ultra = parseFloat(line[2]);
+                    let Solar = parseFloat(line[3]);
+
+                    sensorData.Lidar.push({x: i, y: Lidar});
+                    sensorData.Temp.push({x: i, y: Temp});
+                    sensorData.Ultra.push({x: i, y: Ultra});
+                    sensorData.Solar.push({x: i, y: Solar});
+                }
+                let chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    title: {
+                        text: "Sensor Readings"
+                    },
+                    axisX: {
+                        title: "time"
+                    },
+                    axisY: {
+                        title: "reading"
+                    },
+                    toolTip:{
+                        shared:true
+                    },
+                    legend:{
+                        cursor:"pointer",
+                        vertialAlign:"top",
+                        itemclick: toggleDataSeries
+                    },
+                    data: [{
+                        type:"line",
+                        name:"Ultra",
+                        showInLegend:true,
+                        dataPoints:sensorData.Ultra
+                    },{
+                        type:"line",
+                        name:"Lidar",
+                        showInLegend:true,
+                        dataPoints:sensorData.Lidar },{
+                    type:"line",
+                    name:"Solar",
+                    showInLegend:true,
+                    dataPoints:sensorData.Solar
+                },{
+                    type:"line",
+                    name:"Thermistor",
+                    showInLegend:true,
+                    dataPoints:sensorData.Temp
+                }]
+            });
+
+            chart.render();
+            // Store the chart object in a global variable
+            window.chart = chart;
+        }
+    });
+}
+
+function updateChart() {
+    $.ajax({
+        type: "GET",
+        url:"http://localhost:8000/quest2.js", // replace with the URL for the server endpoint that returns the new data
+        dataType:"text",
+        success: function(data){
+            var lines = data.split("\n");
+            var sensorData = {
+                Lidar: [],
+                Temp: [],
+                Ultra: [],
+                Solar: []
+            };
+            for (var i = 0; i < lines.length; i++) {
+                let line = lines[i].split(",");
+                let Lidar = parseFloat(line[0]);
+                let Temp = parseFloat(line[1]);
+                let Ultra = parseFloat(line[2]);
+                let Solar = parseFloat(line[3]);
+
+                sensorData.Lidar.push({x: i, y: Lidar});
+                sensorData.Temp.push({x: i, y: Temp});
+                sensorData.Ultra.push({x: i, y: Ultra});
+                sensorData.Solar.push({x: i, y: Solar});
+            }
+            // Update the chart with the new data
+            Object.keys(sensorData).forEach(function(key) {
+                chart.data.forEach(function(dataSeries) {
+                    if (dataSeries.name === key) {
+                        dataSeries.dataPoints = sensorData[key];
+                    }
+                });
+            });
+            chart.render();
+        }
+    });
+}
+
+function toggleDataSeries(e){
+    if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+        e.dataSeries.visible = false;
+    } else {
+        e.dataSeries.visible = true;
+    }
+    chart.render();
+}
+});
+
+setInterval(updateChart,1000);
+console
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+</body>
+</html>
