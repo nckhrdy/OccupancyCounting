@@ -18,6 +18,11 @@ Quest2.c reads data from an ultrasonic distance sensor, a lidar distance sensor,
 
 The goal of the project is to calibrate the sensors: by establishing their ranges, offsets, and limitations, specifying the pin assignments, and developing formulas to convert measured units into common engineering units among the sensors. We validated and tested all the sensors before we integrated them together and then displayed the measured values on the console. Using a node.js file, we wrote the console data to a .csv file and created an HTML file that outputted a real-time strip-chart display. Additionally, our solution had an LED that indicated the presence of a detection of occupancy for the duration of the detection, by switching the LED off.
 
+
+### Supporting Artifacts
+Link to video technical presentation: https://drive.google.com/file/d/1oDJhao9CzNB7l-SGE3h6BtSakAOTVBQH/view?usp=sharing
+Link to video demo: https://drive.google.com/file/d/1EmnqX_IH03yqe1wHtGpJlllRLeuJhjsn/view?usp=sharing
+
 ### Self-Assessment 
 
 | Objective Criterion | Rating | Max Value  | 
@@ -47,10 +52,6 @@ Quest Solution Design
 Quest2.c Design
 </p>
 
-
-### Supporting Artifacts
-Link to video technical presentation: https://drive.google.com/file/d/1oDJhao9CzNB7l-SGE3h6BtSakAOTVBQH/view?usp=sharing
-Link to video demo: https://drive.google.com/file/d/1EmnqX_IH03yqe1wHtGpJlllRLeuJhjsn/view?usp=sharing
 
 
 ### Modules, Tools, Source Used Including Attribution
